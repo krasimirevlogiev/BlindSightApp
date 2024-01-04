@@ -1,9 +1,11 @@
 import 'dart:async';
+//import 'dart:html';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_mao/constants.dart';
+import 'package:location/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class OrderTrackingPage extends StatefulWidget {
@@ -20,6 +22,15 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
   static const LatLng destination = LatLng(37.33429383, -122.06600055);
 
   List<LatLng> polylineCoordinates = [];
+  LocationData? currentLocation;
+
+  void getCurrentLocation(){
+    Location location = Location();
+
+    location.getLocation().then((location){
+      currentLocation = location;
+    },);
+  }
 
   void getPolyPoints() async {
     PolylinePoints polylinePoints = PolylinePoints();
@@ -42,11 +53,12 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
 
   @override
   void initState(){
+    getCurrentLocation();
     getPolyPoints();
     super.initState();
   }
 
-   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -55,10 +67,12 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
           style: TextStyle(color: Colors.black, fontSize: 16),
         ),
       ),
-      body: GoogleMap(
+      body: currentLocation == null
+          ? const Center(child: Text("Loading"))
+          :GoogleMap(
         initialCameraPosition: 
             CameraPosition(
-              target: sourceLocation,
+              target: LatLng(currentLocation!.latitude!, currentLocation!.longitude!),
               zoom: 13.5
         ),
         polylines: {
@@ -70,6 +84,9 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
           ),
         },
         markers: {
+          Marker(markerId: const MarkerId("currentLocation"),
+          position: LatLng(currentLocation!.latitude!, currentLocation!.longitude!),
+          ),
           const Marker(markerId: MarkerId("source"),
           position: sourceLocation,
           ),
@@ -81,3 +98,4 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
     );
   }
 }
+
