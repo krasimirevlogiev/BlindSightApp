@@ -23,14 +23,43 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
 
   List<LatLng> polylineCoordinates = [];
   LocationData? currentLocation;
+  Location location = Location();
 
-  void getCurrentLocation(){
-    Location location = Location();
 
-    location.getLocation().then((location){
-      currentLocation = location;
-    },);
+  void getCurrentLocation() async {
+
+    location.getLocation().then(
+      (location){
+        currentLocation = location;
+      },
+      );
+
+    GoogleMapController googleMapController = await _controller.future;
+    location.onLocationChanged.listen((newLoc) {
+      print("Location is changed");
+      currentLocation = newLoc;
+
+      if (_controller.isCompleted) {
+        _controller.future.then((googleMapController) {
+          googleMapController.animateCamera(
+            CameraUpdate.newCameraPosition(
+              CameraPosition(
+                zoom: 13.5,
+                target: LatLng(
+                  newLoc.latitude!,
+                  newLoc.longitude!,
+                ),
+              ),
+            ),
+          );
+        });
+      }
+
+      setState(() {
+      });
+    });
   }
+    
 
   void getPolyPoints() async {
     PolylinePoints polylinePoints = PolylinePoints();
@@ -51,14 +80,14 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
     }
   }
 
-  @override
+@override
   void initState(){
     getCurrentLocation();
-    getPolyPoints();
     super.initState();
+    getPolyPoints();
   }
 
-  @override
+@override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -77,7 +106,7 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
         ),
         polylines: {
           Polyline(
-            polylineId: PolylineId("route"),
+            polylineId: const PolylineId("route"),
             points: polylineCoordinates,
             color: primaryColor,
             width: 6,
@@ -96,6 +125,4 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
         },
       ),
     );
-  }
-}
-
+  }}
