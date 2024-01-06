@@ -24,38 +24,40 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
   List<LatLng> polylineCoordinates = [];
   LocationData? currentLocation;
   Location location = Location();
+  Map<MarkerId, Marker> markers = {};
 
+ void getCurrentLocation() async {
+    location.getLocation().then((locationData) {
+      currentLocation = locationData;
 
-  void getCurrentLocation() async {
+      location.onLocationChanged.listen((newLoc) {
+        print("Location is changed");
+        currentLocation = newLoc;
 
-    location.getLocation().then(
-      (location){
-        currentLocation = location;
-      },
-      );
+        MarkerId markerId = const MarkerId("currentLocation");
+        Marker currentLocationMarker = Marker(
+          markerId: markerId,
+          position: LatLng(newLoc.latitude!, newLoc.longitude!),
+        );
+        setState(() {
+          markers[markerId] = currentLocationMarker;
+        });
 
-    GoogleMapController googleMapController = await _controller.future;
-    location.onLocationChanged.listen((newLoc) {
-      print("Location is changed");
-      currentLocation = newLoc;
-
-      if (_controller.isCompleted) {
-        _controller.future.then((googleMapController) {
-          googleMapController.animateCamera(
-            CameraUpdate.newCameraPosition(
-              CameraPosition(
-                zoom: 13.5,
-                target: LatLng(
-                  newLoc.latitude!,
-                  newLoc.longitude!,
+        if (_controller.isCompleted) {
+          _controller.future.then((googleMapController) {
+            googleMapController.animateCamera(
+              CameraUpdate.newCameraPosition(
+                CameraPosition(
+                  zoom: 13.5,
+                  target: LatLng(
+                    newLoc.latitude!,
+                    newLoc.longitude!,
+                  ),
                 ),
               ),
-            ),
-          );
-        });
-      }
-
-      setState(() {
+            );
+          });
+        }
       });
     });
   }
@@ -82,8 +84,18 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
 
 @override
   void initState(){
-    getCurrentLocation();
     super.initState();
+    // Add the source and destination markers to the map
+    markers[const MarkerId("source")] =const Marker(
+      markerId: MarkerId("source"),
+      position: sourceLocation,
+    );
+    markers[const MarkerId("destination")] =const Marker(
+      markerId: MarkerId("destination"),
+      position: destination,
+    );
+
+    getCurrentLocation();
     getPolyPoints();
   }
 
@@ -112,17 +124,7 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
             width: 6,
           ),
         },
-        markers: {
-          Marker(markerId: const MarkerId("currentLocation"),
-          position: LatLng(currentLocation!.latitude!, currentLocation!.longitude!),
-          ),
-          const Marker(markerId: MarkerId("source"),
-          position: sourceLocation,
-          ),
-          const Marker(markerId: MarkerId("destination"),
-          position: destination,
-          ),
-        },
+        markers: Set<Marker>.of(markers.values),
       ),
     );
   }}
