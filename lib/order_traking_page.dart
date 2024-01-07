@@ -26,11 +26,30 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
   Location location = Location();
   Map<MarkerId, Marker> markers = {};
   GoogleMapController? googleMapController;
+  bool _cameraLocked = false;
 
  void _onMapCreated(GoogleMapController controller) {
     googleMapController = controller;
     _controller.complete(controller);
-}
+    location.onLocationChanged.listen((newLoc) async {
+      currentLocation = newLoc;
+
+      if (_cameraLocked && googleMapController != null) {
+        googleMapController!.animateCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(
+              target: LatLng(newLoc.latitude!, newLoc.longitude!),
+              zoom: 13.5,
+            ),
+          ),
+        );
+      }
+
+      // ...
+    });
+  }
+
+
  void getCurrentLocation() async {
   location.getLocation().then((locationData) {
     currentLocation = locationData;
@@ -142,6 +161,11 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
             children: <Widget>[
               GoogleMap(
                 onMapCreated: _onMapCreated,
+                onTap: (LatLng location){
+                  setState(() {
+                    _cameraLocked = false;
+                  });
+                },
                 initialCameraPosition: 
                   CameraPosition(
                     target: LatLng(currentLocation!.latitude!, currentLocation!.longitude!),
@@ -173,6 +197,9 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
                           ),
                         ),
                       );
+                      setState(() {
+                        _cameraLocked = true;
+                      });
                     }
                   },
                   child: const Icon(Icons.navigation, color: Colors.white),
