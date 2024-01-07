@@ -25,13 +25,17 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
   LocationData? currentLocation;
   Location location = Location();
   Map<MarkerId, Marker> markers = {};
+  GoogleMapController? googleMapController;
 
+ void _onMapCreated(GoogleMapController controller) {
+    googleMapController = controller;
+    _controller.complete(controller);
+}
  void getCurrentLocation() async {
     location.getLocation().then((locationData) {
       currentLocation = locationData;
 
-      location.onLocationChanged.listen((newLoc) {
-        print("Location is changed");
+      location.onLocationChanged.listen((newLoc) async{
         currentLocation = newLoc;
 
         MarkerId markerId = const MarkerId("currentLocation");
@@ -44,7 +48,7 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
         });
 
         if (_controller.isCompleted) {
-          _controller.future.then((googleMapController) {
+          GoogleMapController googleMapController = await _controller.future; // Await the future here
             googleMapController.animateCamera(
               CameraUpdate.newCameraPosition(
                 CameraPosition(
@@ -56,7 +60,6 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
                 ),
               ),
             );
-          });
         }
       });
     });
@@ -111,6 +114,7 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
       body: currentLocation == null
           ? const Center(child: Text("Loading"))
           :GoogleMap(
+        onMapCreated: _onMapCreated,
         initialCameraPosition: 
             CameraPosition(
               target: LatLng(currentLocation!.latitude!, currentLocation!.longitude!),
@@ -127,4 +131,5 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
         markers: Set<Marker>.of(markers.values),
       ),
     );
-  }}
+  }
+}
