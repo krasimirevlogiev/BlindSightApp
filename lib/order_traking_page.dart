@@ -1,9 +1,11 @@
 import 'dart:async';
+//import 'dart:html';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_mao/constants.dart';
+import 'package:location/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class OrderTrackingPage extends StatefulWidget {
@@ -20,6 +22,53 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
   static const LatLng destination = LatLng(37.33429383, -122.06600055);
 
   List<LatLng> polylineCoordinates = [];
+  LocationData? currentLocation;
+  Location location = Location();
+  Map<MarkerId, Marker> markers = {};
+  GoogleMapController? googleMapController;
+  bool _cameraLocked = false;
+
+ void _onMapCreated(GoogleMapController controller) {
+    googleMapController = controller;
+    _controller.complete(controller);
+    location.onLocationChanged.listen((newLoc) async {
+      currentLocation = newLoc;
+
+      if (_cameraLocked && googleMapController != null) {
+        googleMapController!.animateCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(
+              target: LatLng(newLoc.latitude!, newLoc.longitude!),
+              zoom: 13.5,
+            ),
+          ),
+        );
+      }
+
+      // ...
+    });
+  }
+
+
+ void getCurrentLocation() async {
+  location.getLocation().then((locationData) {
+    currentLocation = locationData;
+
+    location.onLocationChanged.listen((newLoc) async{
+      currentLocation = newLoc;
+
+      MarkerId markerId = const MarkerId("currentLocation");
+      Marker currentLocationMarker = Marker(
+        markerId: markerId,
+        position: LatLng(newLoc.latitude!, newLoc.longitude!),
+      );
+      setState(() {
+        markers[markerId] = currentLocationMarker;
+      });
+    });
+  });
+}
+    
 
   void getPolyPoints() async {
     PolylinePoints polylinePoints = PolylinePoints();
@@ -40,44 +89,124 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
     }
   }
 
-  @override
+@override
   void initState(){
-    getPolyPoints();
     super.initState();
+    markers[const MarkerId("source")] =const Marker(
+      markerId: MarkerId("source"),
+      position: sourceLocation,
+    );
+    markers[const MarkerId("destination")] =const Marker(
+      markerId: MarkerId("destination"),
+      position: destination,
+    );
+
+    getCurrentLocation();
+    getPolyPoints();
   }
 
-   @override
+
+
+@override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Track the disabled",
-          style: TextStyle(color: Colors.black, fontSize: 16),
-        ),
+  return Scaffold(
+    appBar: AppBar(
+      leading: IconButton(
+    icon: Icon(Icons.menu, color: Colors.black),
+    onPressed: () {
+      Scaffold.of(context).openDrawer();
+    },
+  ),
+      backgroundColor: Colors.white,
+  title: const Text(
+    "Track the disabled",
+    style: TextStyle(color: Colors.black, fontSize: 16),
       ),
-      body: GoogleMap(
-        initialCameraPosition: 
-            CameraPosition(
-              target: sourceLocation,
-              zoom: 13.5
-        ),
-        polylines: {
-          Polyline(
-            polylineId: PolylineId("route"),
-            points: polylineCoordinates,
-            color: primaryColor,
-            width: 6,
+    ),
+    drawer: Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          const DrawerHeader(
+            decoration: BoxDecoration(
+              color: Colors.black,
+            ),
+            child: Text(
+              'Menu',
+              style: TextStyle(color: Colors.white, fontSize: 24),
+              ),
           ),
-        },
-        markers: {
-          const Marker(markerId: MarkerId("source"),
-          position: sourceLocation,
+          ListTile(
+            title: Text('Item 1'),
+            onTap: () {
+              // Update the state of the app
+              // Then close the drawer
+              Navigator.pop(context);
+            },
           ),
-          const Marker(markerId: MarkerId("destination"),
-          position: destination,
+          ListTile(
+            title: Text('Item 2'),
+            onTap: () {
+              // Update the state of the app
+              // Then close the drawer
+              Navigator.pop(context);
+            },
           ),
-        },
+        ],
       ),
-    );
-  }
+    ),
+    body: currentLocation == null
+        ? const Center(child: Text("Loading"))
+        : Stack(
+            children: <Widget>[
+              GoogleMap(
+                onMapCreated: _onMapCreated,
+                onTap: (LatLng location){
+                  setState(() {
+                    _cameraLocked = false;
+                  });
+                },
+                initialCameraPosition: 
+                  CameraPosition(
+                    target: LatLng(currentLocation!.latitude!, currentLocation!.longitude!),
+                    zoom: 13.5
+                  ),
+                polylines: {
+                  Polyline(
+                    polylineId: const PolylineId("route"),
+                    points: polylineCoordinates,
+                    color: primaryColor,
+                    width: 6,
+                  ),
+                },
+                markers: Set<Marker>.of(markers.values),
+                myLocationButtonEnabled: false,
+              ),
+              Positioned(
+                bottom: 30,
+                right: 30,
+                child: FloatingActionButton(
+                  backgroundColor: Colors.black,
+                  onPressed: () async {
+                    if (currentLocation != null && googleMapController != null) {
+                      googleMapController!.animateCamera(
+                        CameraUpdate.newCameraPosition(
+                          CameraPosition(
+                            target: LatLng(currentLocation!.latitude!, currentLocation!.longitude!),
+                            zoom: 13.5,
+                          ),
+                        ),
+                      );
+                      setState(() {
+                        _cameraLocked = true;
+                      });
+                    }
+                  },
+                  child: const Icon(Icons.navigation, color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+  );
+}
 }
