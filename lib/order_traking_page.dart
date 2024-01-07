@@ -32,38 +32,23 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
     _controller.complete(controller);
 }
  void getCurrentLocation() async {
-    location.getLocation().then((locationData) {
-      currentLocation = locationData;
+  location.getLocation().then((locationData) {
+    currentLocation = locationData;
 
-      location.onLocationChanged.listen((newLoc) async{
-        currentLocation = newLoc;
+    location.onLocationChanged.listen((newLoc) async{
+      currentLocation = newLoc;
 
-        MarkerId markerId = const MarkerId("currentLocation");
-        Marker currentLocationMarker = Marker(
-          markerId: markerId,
-          position: LatLng(newLoc.latitude!, newLoc.longitude!),
-        );
-        setState(() {
-          markers[markerId] = currentLocationMarker;
-        });
-
-        if (_controller.isCompleted) {
-          GoogleMapController googleMapController = await _controller.future; // Await the future here
-            googleMapController.animateCamera(
-              CameraUpdate.newCameraPosition(
-                CameraPosition(
-                  zoom: 13.5,
-                  target: LatLng(
-                    newLoc.latitude!,
-                    newLoc.longitude!,
-                  ),
-                ),
-              ),
-            );
-        }
+      MarkerId markerId = const MarkerId("currentLocation");
+      Marker currentLocationMarker = Marker(
+        markerId: markerId,
+        position: LatLng(newLoc.latitude!, newLoc.longitude!),
+      );
+      setState(() {
+        markers[markerId] = currentLocationMarker;
       });
     });
-  }
+  });
+}
     
 
   void getPolyPoints() async {
@@ -88,7 +73,6 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
 @override
   void initState(){
     super.initState();
-    // Add the source and destination markers to the map
     markers[const MarkerId("source")] =const Marker(
       markerId: MarkerId("source"),
       position: sourceLocation,
@@ -102,34 +86,100 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
     getPolyPoints();
   }
 
+
+
 @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Track the disabled",
-          style: TextStyle(color: Colors.black, fontSize: 16),
-        ),
+  return Scaffold(
+    appBar: AppBar(
+      leading: IconButton(
+    icon: Icon(Icons.menu, color: Colors.black),
+    onPressed: () {
+      Scaffold.of(context).openDrawer();
+    },
+  ),
+      backgroundColor: Colors.white,
+  title: const Text(
+    "Track the disabled",
+    style: TextStyle(color: Colors.black, fontSize: 16),
       ),
-      body: currentLocation == null
-          ? const Center(child: Text("Loading"))
-          :GoogleMap(
-        onMapCreated: _onMapCreated,
-        initialCameraPosition: 
-            CameraPosition(
-              target: LatLng(currentLocation!.latitude!, currentLocation!.longitude!),
-              zoom: 13.5
-        ),
-        polylines: {
-          Polyline(
-            polylineId: const PolylineId("route"),
-            points: polylineCoordinates,
-            color: primaryColor,
-            width: 6,
+    ),
+    drawer: Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          const DrawerHeader(
+            decoration: BoxDecoration(
+              color: Colors.black,
+            ),
+            child: Text(
+              'Menu',
+              style: TextStyle(color: Colors.white, fontSize: 24),
+              ),
           ),
-        },
-        markers: Set<Marker>.of(markers.values),
+          ListTile(
+            title: Text('Item 1'),
+            onTap: () {
+              // Update the state of the app
+              // Then close the drawer
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            title: Text('Item 2'),
+            onTap: () {
+              // Update the state of the app
+              // Then close the drawer
+              Navigator.pop(context);
+            },
+          ),
+        ],
       ),
-    );
-  }
+    ),
+    body: currentLocation == null
+        ? const Center(child: Text("Loading"))
+        : Stack(
+            children: <Widget>[
+              GoogleMap(
+                onMapCreated: _onMapCreated,
+                initialCameraPosition: 
+                  CameraPosition(
+                    target: LatLng(currentLocation!.latitude!, currentLocation!.longitude!),
+                    zoom: 13.5
+                  ),
+                polylines: {
+                  Polyline(
+                    polylineId: const PolylineId("route"),
+                    points: polylineCoordinates,
+                    color: primaryColor,
+                    width: 6,
+                  ),
+                },
+                markers: Set<Marker>.of(markers.values),
+                myLocationButtonEnabled: false,
+              ),
+              Positioned(
+                bottom: 30,
+                right: 30,
+                child: FloatingActionButton(
+                  backgroundColor: Colors.black,
+                  onPressed: () async {
+                    if (currentLocation != null && googleMapController != null) {
+                      googleMapController!.animateCamera(
+                        CameraUpdate.newCameraPosition(
+                          CameraPosition(
+                            target: LatLng(currentLocation!.latitude!, currentLocation!.longitude!),
+                            zoom: 13.5,
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                  child: const Icon(Icons.navigation, color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+  );
+}
 }
