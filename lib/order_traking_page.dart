@@ -27,15 +27,25 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
   Map<MarkerId, Marker> markers = {};
   GoogleMapController? googleMapController;
   bool _cameraLocked = false;
+    bool _userInteracted = false;
 
  void _onMapCreated(GoogleMapController controller) {
     googleMapController = controller;
     _controller.complete(controller);
+  }
+
+
+DateTime _lastUserInteraction = DateTime.now();
+
+void getCurrentLocation() async {
+  location.getLocation().then((locationData) {
+    currentLocation = locationData;
+
     location.onLocationChanged.listen((newLoc) async {
       currentLocation = newLoc;
 
-      if (_cameraLocked && googleMapController != null) {
-        googleMapController!.animateCamera(
+      if (DateTime.now().difference(_lastUserInteraction).inSeconds > 1 && googleMapController != null) {
+        await googleMapController!.animateCamera(
           CameraUpdate.newCameraPosition(
             CameraPosition(
               target: LatLng(newLoc.latitude!, newLoc.longitude!),
@@ -44,18 +54,6 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
           ),
         );
       }
-
-      // ...
-    });
-  }
-
-
- void getCurrentLocation() async {
-  location.getLocation().then((locationData) {
-    currentLocation = locationData;
-
-    location.onLocationChanged.listen((newLoc) async{
-      currentLocation = newLoc;
 
       MarkerId markerId = const MarkerId("currentLocation");
       Marker currentLocationMarker = Marker(
@@ -162,10 +160,12 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
               GoogleMap(
                 onMapCreated: _onMapCreated,
                 onTap: (LatLng location){
-                  setState(() {
-                    _cameraLocked = false;
-                  });
+                  _lastUserInteraction = DateTime.now();
+                  _userInteracted = true;
                 },
+               onCameraMoveStarted: () {
+                  _lastUserInteraction = DateTime.now();
+              },
                 initialCameraPosition: 
                   CameraPosition(
                     target: LatLng(currentLocation!.latitude!, currentLocation!.longitude!),
@@ -189,19 +189,17 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
                   backgroundColor: Colors.black,
                   onPressed: () async {
                     if (currentLocation != null && googleMapController != null) {
-                      googleMapController!.animateCamera(
-                        CameraUpdate.newCameraPosition(
-                          CameraPosition(
-                            target: LatLng(currentLocation!.latitude!, currentLocation!.longitude!),
-                            zoom: 13.5,
-                          ),
-                        ),
-                      );
-                      setState(() {
-                        _cameraLocked = true;
-                      });
-                    }
-                  },
+                        _lastUserInteraction = DateTime.now().subtract(Duration(seconds: 2));
+                        await googleMapController!.animateCamera(
+                          CameraUpdate.newCameraPosition(
+                            CameraPosition(
+                              target: LatLng(currentLocation!.latitude!, currentLocation!.longitude!),
+                              zoom: 13.5,
+                               ),
+                             ),
+                          );
+                        }
+                      },
                   child: const Icon(Icons.navigation, color: Colors.white),
                 ),
               ),
