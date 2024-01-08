@@ -26,16 +26,22 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
   Location location = Location();
   Map<MarkerId, Marker> markers = {};
   GoogleMapController? googleMapController;
-  bool _cameraLocked = false;
+  bool _cameraShouldFollowLocation = true;
 
  void _onMapCreated(GoogleMapController controller) {
     googleMapController = controller;
     _controller.complete(controller);
+  }
+
+void getCurrentLocation() async {
+  location.getLocation().then((locationData) {
+    currentLocation = locationData;
+
     location.onLocationChanged.listen((newLoc) async {
       currentLocation = newLoc;
 
-      if (_cameraLocked && googleMapController != null) {
-        googleMapController!.animateCamera(
+      if (_cameraShouldFollowLocation && googleMapController != null) {
+        await googleMapController!.animateCamera(
           CameraUpdate.newCameraPosition(
             CameraPosition(
               target: LatLng(newLoc.latitude!, newLoc.longitude!),
@@ -45,28 +51,16 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
         );
       }
 
-      // ...
-    });
-  }
-
-
- void getCurrentLocation() async {
-  location.getLocation().then((locationData) {
-    currentLocation = locationData;
-
-    location.onLocationChanged.listen((newLoc) async{
-      currentLocation = newLoc;
-
-      MarkerId markerId = const MarkerId("currentLocation");
-      Marker currentLocationMarker = Marker(
-        markerId: markerId,
-        position: LatLng(newLoc.latitude!, newLoc.longitude!),
-      );
-      setState(() {
-        markers[markerId] = currentLocationMarker;
-      });
+    MarkerId markerId = const MarkerId("currentLocation");
+    Marker currentLocationMarker = Marker(
+      markerId: markerId,
+      position: LatLng(newLoc.latitude!, newLoc.longitude!),
+    );
+    setState(() {
+      markers[markerId] = currentLocationMarker;
     });
   });
+});
 }
     
 
@@ -100,7 +94,6 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
       markerId: MarkerId("destination"),
       position: destination,
     );
-
     getCurrentLocation();
     getPolyPoints();
   }
@@ -161,11 +154,9 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
             children: <Widget>[
               GoogleMap(
                 onMapCreated: _onMapCreated,
-                onTap: (LatLng location){
-                  setState(() {
-                    _cameraLocked = false;
-                  });
-                },
+               onTap: (LatLng location){
+                  _cameraShouldFollowLocation = false;
+                },              
                 initialCameraPosition: 
                   CameraPosition(
                     target: LatLng(currentLocation!.latitude!, currentLocation!.longitude!),
@@ -189,24 +180,22 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
                   backgroundColor: Colors.black,
                   onPressed: () async {
                     if (currentLocation != null && googleMapController != null) {
-                      googleMapController!.animateCamera(
-                        CameraUpdate.newCameraPosition(
-                          CameraPosition(
-                            target: LatLng(currentLocation!.latitude!, currentLocation!.longitude!),
-                            zoom: 13.5,
-                          ),
-                        ),
-                      );
-                      setState(() {
-                        _cameraLocked = true;
-                      });
-                    }
-                  },
+                        _cameraShouldFollowLocation = true;
+                        await googleMapController!.animateCamera(
+                          CameraUpdate.newCameraPosition(
+                            CameraPosition(
+                              target: LatLng(currentLocation!.latitude!, currentLocation!.longitude!),
+                              zoom: 13.5,
+                               ),
+                             ),
+                          );
+                        }
+                      },
                   child: const Icon(Icons.navigation, color: Colors.white),
                 ),
               ),
             ],
           ),
-  );
-}
-}
+        );
+      }
+    }
