@@ -202,13 +202,11 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
               children: <Widget>[
                 GoogleMap(
                   onMapCreated: _onMapCreated,
-                  onTap: (LatLng location) {
-                    _cameraShouldFollowLocation = false;
-                  },
                   initialCameraPosition: CameraPosition(
-                      target: LatLng(currentLocation!.latitude!,
-                          currentLocation!.longitude!),
-                      zoom: 13.5),
+                    target: LatLng(currentLocation!.latitude!,
+                        currentLocation!.longitude!),
+                    zoom: 13.5,
+                  ),
                   polylines: {
                     Polyline(
                       polylineId: const PolylineId("route"),
@@ -219,6 +217,14 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
                   },
                   markers: Set<Marker>.of(markers.values),
                   myLocationButtonEnabled: false,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    _cameraShouldFollowLocation = false;
+                  },
+                  child: Container(
+                    color: Colors.transparent,
+                  ),
                 ),
                 Positioned(
                   bottom: 30,
