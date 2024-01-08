@@ -1,6 +1,7 @@
 import 'dart:async';
 //import 'dart:html';
-
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -39,8 +40,60 @@ class LocationSearchDelegate extends SearchDelegate<String> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    // TODO: Implement your logic to show suggestions while the user is typing
-    return Container();
+    if (query.isEmpty) {
+      return const Center(child: Text('Start typing...'));
+    } else {
+      return FutureBuilder<List<String>>(
+        future: _getPlaceSuggestions(query),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            List<String> suggestions = snapshot.data!;
+            return ListView.builder(
+              itemCount: suggestions.length,
+              itemBuilder: (context, index) {
+                return Card(
+                  color: Colors.white,
+                  child: ListTile(
+                    leading: Icon(Icons.location_on, color: Colors.black),
+                    title: Text(suggestions[index],
+                        style: TextStyle(color: Colors.black)),
+                    trailing:
+                        Icon(Icons.arrow_forward_ios, color: Colors.black),
+                    onTap: () {
+                      close(context, suggestions[index]);
+                    },
+                  ),
+                );
+              },
+            );
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        },
+      );
+    }
+  }
+
+  Future<List<String>> _getPlaceSuggestions(String query) async {
+    final response = await http.get(
+      Uri.parse(
+        'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$query&key=AIzaSyBPg4rFcszsTpNmd0mSjSMKye20SrGlhD8',
+      ),
+    );
+
+    if (response.statusCode == 200) {
+      // If the server returns a 200 OK response, parse the JSON.
+      Map<String, dynamic> data = jsonDecode(response.body);
+      List<dynamic> predictions = data['predictions'];
+      return predictions
+          .map<String>((prediction) => prediction['description'] as String)
+          .toList();
+    } else {
+      // If the server returns an error response, throw an exception.
+      throw Exception('Failed to load place suggestions');
+    }
   }
 }
 

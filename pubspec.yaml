@@ -38,6 +38,7 @@ dependencies:
   location: ^5.0.3
   flutter_svg: ^2.0.9
   google_maps_webservice: 
+  http: ^0.13.3
 
 dev_dependencies:
   flutter_launcher_icons: ^0.9.2
