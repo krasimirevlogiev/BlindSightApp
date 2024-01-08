@@ -9,7 +9,23 @@ import 'package:google_mao/constants.dart';
 import 'package:location/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+List<LatLng> polylineCoordinates = [];
+LocationData? currentLocation;
+Location location = Location();
+Map<MarkerId, Marker> markers = {};
+GoogleMapController? googleMapController;
+bool _cameraShouldFollowLocation = false;
+GoogleMapController? _controller;
+Set<Marker> _markers = {};
+Polyline _polyline = Polyline(polylineId: PolylineId('route1'), visible: false);
+LatLng? _selectedPlace;
+LatLng _userLocation = LatLng(0, 0); // Replace with the user's actual location
+
 class LocationSearchDelegate extends SearchDelegate<String> {
+  final OrderTrackingPageState mapState;
+
+  LocationSearchDelegate(this.mapState);
+
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
@@ -95,6 +111,25 @@ class LocationSearchDelegate extends SearchDelegate<String> {
       throw Exception('Failed to load place suggestions');
     }
   }
+
+  void setSelectedPlace(String place) {
+    // TODO: Replace with the actual LatLng of the place
+    _selectedPlace = LatLng(0, 0);
+    if (_selectedPlace != null) {
+      _markers.add(Marker(
+          markerId: MarkerId('selectedPlace'), position: _selectedPlace!));
+      _polyline = Polyline(
+        polylineId: PolylineId('route1'),
+        visible: true,
+        points: [
+          LatLng(currentLocation!.latitude!, currentLocation!.longitude!),
+          _selectedPlace!
+        ],
+        color: Colors.blue,
+      );
+      _controller?.moveCamera(CameraUpdate.newLatLng(_selectedPlace!));
+    }
+  }
 }
 
 class OrderTrackingPage extends StatefulWidget {
@@ -106,16 +141,14 @@ class OrderTrackingPage extends StatefulWidget {
 
 class OrderTrackingPageState extends State<OrderTrackingPage> {
   final Completer<GoogleMapController> _controller = Completer();
+  LatLng? sourceLocation;
+  LatLng? destination;
+  bool _suggestionSelected = false;
 
-  static const LatLng sourceLocation = LatLng(37.33500926, -122.03272188);
-  static const LatLng destination = LatLng(37.33429383, -122.06600055);
-
-  List<LatLng> polylineCoordinates = [];
-  LocationData? currentLocation;
-  Location location = Location();
-  Map<MarkerId, Marker> markers = {};
-  GoogleMapController? googleMapController;
-  bool _cameraShouldFollowLocation = false;
+  void setSelectedPlace(String place) {
+    // ...
+    _suggestionSelected = true;
+  }
 
   void _onMapCreated(GoogleMapController controller) {
     googleMapController = controller;
@@ -152,39 +185,11 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
     });
   }
 
-  void getPolyPoints() async {
-    PolylinePoints polylinePoints = PolylinePoints();
-
-    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-      google_api_key,
-      PointLatLng(sourceLocation.latitude, sourceLocation.longitude),
-      PointLatLng(destination.latitude, destination.longitude),
-    );
-
-    if (result.points.isNotEmpty) {
-      result.points.forEach(
-        (PointLatLng point) => polylineCoordinates.add(
-          LatLng(point.latitude, point.longitude),
-        ),
-      );
-      setState(() {});
-    }
-  }
-
   @override
   void initState() {
     super.initState();
-    markers[const MarkerId("source")] = const Marker(
-      markerId: MarkerId("source"),
-      position: sourceLocation,
-    );
-    markers[const MarkerId("destination")] = const Marker(
-      markerId: MarkerId("destination"),
-      position: destination,
-    );
 
     getCurrentLocation();
-    getPolyPoints();
   }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -211,7 +216,7 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
             onPressed: () {
               showSearch(
                 context: context,
-                delegate: LocationSearchDelegate(),
+                delegate: LocationSearchDelegate(this),
               ); // Manually request the keyboard to show up
             },
           )
@@ -260,14 +265,7 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
                         currentLocation!.longitude!),
                     zoom: 13.5,
                   ),
-                  polylines: {
-                    Polyline(
-                      polylineId: const PolylineId("route"),
-                      points: polylineCoordinates,
-                      color: primaryColor,
-                      width: 6,
-                    ),
-                  },
+                  polylines: {_polyline},
                   markers: Set<Marker>.of(markers.values),
                   myLocationButtonEnabled: false,
                 ),
@@ -279,6 +277,23 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
                     color: Colors.transparent,
                   ),
                 ),
+                if (_suggestionSelected)
+                  Positioned(
+                    top: 10,
+                    right: 10,
+                    child: FloatingActionButton(
+                      child: Icon(Icons.clear),
+                      onPressed: () {
+                        setState(() {
+                          _markers.removeWhere((marker) =>
+                              marker.markerId == MarkerId('selectedPlace'));
+                          _polyline = Polyline(
+                              polylineId: PolylineId('route1'), visible: false);
+                          _suggestionSelected = false;
+                        });
+                      },
+                    ),
+                  ),
                 Positioned(
                   bottom: 30,
                   right: 30,
