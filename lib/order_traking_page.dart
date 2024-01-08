@@ -26,16 +26,14 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
   Location location = Location();
   Map<MarkerId, Marker> markers = {};
   GoogleMapController? googleMapController;
-  bool _cameraLocked = false;
-    bool _userInteracted = false;
+  bool _cameraShouldFollowLocation = false;
+
 
  void _onMapCreated(GoogleMapController controller) {
     googleMapController = controller;
     _controller.complete(controller);
   }
 
-
-DateTime _lastUserInteraction = DateTime.now();
 
 void getCurrentLocation() async {
   location.getLocation().then((locationData) {
@@ -44,7 +42,7 @@ void getCurrentLocation() async {
     location.onLocationChanged.listen((newLoc) async {
       currentLocation = newLoc;
 
-      if (DateTime.now().difference(_lastUserInteraction).inSeconds > 1 && googleMapController != null) {
+      if (_cameraShouldFollowLocation && googleMapController != null) {
         await googleMapController!.animateCamera(
           CameraUpdate.newCameraPosition(
             CameraPosition(
@@ -160,12 +158,9 @@ void getCurrentLocation() async {
               GoogleMap(
                 onMapCreated: _onMapCreated,
                 onTap: (LatLng location){
-                  _lastUserInteraction = DateTime.now();
-                  _userInteracted = true;
+                  _cameraShouldFollowLocation = false;
                 },
-               onCameraMoveStarted: () {
-                  _lastUserInteraction = DateTime.now();
-              },
+               
                 initialCameraPosition: 
                   CameraPosition(
                     target: LatLng(currentLocation!.latitude!, currentLocation!.longitude!),
@@ -189,7 +184,7 @@ void getCurrentLocation() async {
                   backgroundColor: Colors.black,
                   onPressed: () async {
                     if (currentLocation != null && googleMapController != null) {
-                        _lastUserInteraction = DateTime.now().subtract(Duration(seconds: 2));
+                        _cameraShouldFollowLocation = true;
                         await googleMapController!.animateCamera(
                           CameraUpdate.newCameraPosition(
                             CameraPosition(
@@ -205,6 +200,6 @@ void getCurrentLocation() async {
               ),
             ],
           ),
-  );
-}
-}
+        );
+      }
+    }
