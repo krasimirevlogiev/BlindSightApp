@@ -258,23 +258,20 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
           ? const Center(child: Text("Loading"))
           : Stack(
               children: <Widget>[
-                GoogleMap(
-                  onMapCreated: _onMapCreated,
-                  initialCameraPosition: CameraPosition(
-                    target: LatLng(currentLocation!.latitude!,
-                        currentLocation!.longitude!),
-                    zoom: 13.5,
-                  ),
-                  polylines: {_polyline},
-                  markers: Set<Marker>.of(markers.values),
-                  myLocationButtonEnabled: false,
-                ),
-                GestureDetector(
-                  onTap: () {
+                Listener(
+                  onPointerDown: (_) {
                     _cameraShouldFollowLocation = false;
                   },
-                  child: Container(
-                    color: Colors.transparent,
+                  child: GoogleMap(
+                    onMapCreated: _onMapCreated,
+                    initialCameraPosition: CameraPosition(
+                      target: LatLng(currentLocation!.latitude!,
+                          currentLocation!.longitude!),
+                      zoom: 13.5,
+                    ),
+                    polylines: {_polyline},
+                    markers: Set<Marker>.of(markers.values),
+                    myLocationButtonEnabled: false,
                   ),
                 ),
                 if (_suggestionSelected)
