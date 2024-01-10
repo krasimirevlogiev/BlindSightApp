@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:google_mao/camera_page.dart';
 import 'package:google_mao/constants.dart';
 import 'package:location/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -236,11 +237,13 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
               ),
             ),
             ListTile(
-              title: Text('Item 1'),
-              onTap: () {
-                // Update the state of the app
-                // Then close the drawer
-                Navigator.pop(context);
+              title: Text('BlindSight Guidance'),
+              onTap: () async {
+                final camera = await initCamera();
+                Navigator.push(
+                    context,
+                     MaterialPageRoute(builder: (context) => BlindSightGuidance(camera: camera)),
+                );
               },
             ),
             ListTile(

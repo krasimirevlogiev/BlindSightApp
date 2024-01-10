@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_mao/order_traking_page.dart';
 
-void main() {
+Future<void> main() async {
   runApp(const MyApp());
 }
 
