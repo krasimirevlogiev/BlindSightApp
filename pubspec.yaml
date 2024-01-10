@@ -38,13 +38,10 @@ dependencies:
   location: ^5.0.3
   flutter_svg: ^2.0.9
   google_maps_webservice: 
-<<<<<<< HEAD
   http: ^0.13.3
-=======
   camera: ^0.10.5+9
   path_provider: ^2.1.2
   path: ^1.8.3
->>>>>>> dev
 
 dev_dependencies:
   flutter_launcher_icons: ^0.9.2
