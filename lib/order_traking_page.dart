@@ -5,10 +5,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
-import 'package:google_mao/camera_page.dart';
-import 'package:google_mao/constants.dart';
+import 'package:BlindSightApp/camera_page.dart';
+import 'package:BlindSightApp/constants.dart';
 import 'package:location/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_compass/flutter_compass.dart';
 
 List<LatLng> polylineCoordinates = [];
 LocationData? currentLocation;
@@ -20,7 +21,7 @@ GoogleMapController? _controller;
 Set<Marker> _markers = {};
 Polyline _polyline = Polyline(polylineId: PolylineId('route1'), visible: false);
 LatLng? _selectedPlace;
-LatLng _userLocation = LatLng(0, 0); // Replace with the user's actual location
+double? deviceOrientation;
 
 class LocationSearchDelegate extends SearchDelegate<String> {
   final OrderTrackingPageState mapState;
@@ -68,18 +69,14 @@ class LocationSearchDelegate extends SearchDelegate<String> {
             return ListView.builder(
               itemCount: suggestions.length,
               itemBuilder: (context, index) {
-                return Card(
-                  color: Colors.white,
-                  child: ListTile(
-                    leading: Icon(Icons.location_on, color: Colors.black),
-                    title: Text(suggestions[index],
-                        style: TextStyle(color: Colors.black)),
-                    trailing:
-                        Icon(Icons.arrow_forward_ios, color: Colors.black),
-                    onTap: () {
-                      close(context, suggestions[index]);
-                    },
-                  ),
+                return ListTile(
+                  leading: Icon(Icons.location_on, color: Colors.black),
+                  title: Text(suggestions[index],
+                      style: TextStyle(color: Colors.black)),
+                  trailing: Icon(Icons.arrow_forward_ios, color: Colors.black),
+                  onTap: () {
+                    close(context, suggestions[index]);
+                  },
                 );
               },
             );
@@ -168,16 +165,23 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
             CameraUpdate.newCameraPosition(
               CameraPosition(
                 target: LatLng(newLoc.latitude!, newLoc.longitude!),
-                zoom: 13.5,
+                zoom: 15.5,
               ),
             ),
           );
         }
 
+        final ImageConfiguration imageConfiguration =
+            createLocalImageConfiguration(context);
+        final BitmapDescriptor bitmapDescriptor =
+            await BitmapDescriptor.fromAssetImage(
+                imageConfiguration, 'assets/currentLocation.png');
+
         MarkerId markerId = const MarkerId("currentLocation");
         Marker currentLocationMarker = Marker(
           markerId: markerId,
           position: LatLng(newLoc.latitude!, newLoc.longitude!),
+          icon: bitmapDescriptor,
         );
         setState(() {
           markers[markerId] = currentLocationMarker;
@@ -189,7 +193,11 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
   @override
   void initState() {
     super.initState();
-
+    FlutterCompass.events?.listen((CompassEvent direction) {
+      setState(() {
+        deviceOrientation = direction.heading;
+      });
+    });
     getCurrentLocation();
   }
 
@@ -218,7 +226,7 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
               showSearch(
                 context: context,
                 delegate: LocationSearchDelegate(this),
-              ); // Manually request the keyboard to show up
+              );
             },
           )
         ],
@@ -241,8 +249,9 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
               onTap: () async {
                 final camera = await initCamera();
                 Navigator.push(
-                    context,
-                     MaterialPageRoute(builder: (context) => BlindSightGuidance(camera: camera)),
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => BlindSightGuidance(camera: camera)),
                 );
               },
             ),
@@ -308,7 +317,7 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
                             CameraPosition(
                               target: LatLng(currentLocation!.latitude!,
                                   currentLocation!.longitude!),
-                              zoom: 13.5,
+                              zoom: 15.5,
                             ),
                           ),
                         );
