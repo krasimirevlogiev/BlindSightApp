@@ -16,6 +16,33 @@ Future<CameraDescription> initCamera() async {
   return cameras.first;
 }
 
+void launchCamera(CameraController _controller) async {
+    // NOTE: we need to find out how long it takes for AI to analyze an image
+    final serverDelay = 500;
+
+    // TODO: save serverDelay and serverUrl in env variables
+    final url = "http://10.0.2.2:3000/image";
+
+    var id = 0;
+
+    // TODO: change 5 to true when implementing with AI for constant inflow of images
+    while (id < 5) {
+        final image = await _controller.takePicture();
+        sleep(Duration(milliseconds: serverDelay));
+
+        final image_bytes = await image.readAsBytes();
+
+        final request = http.MultipartRequest("POST", Uri.parse(url));
+        request.fields["name"] = "guidanceIMG_$id";
+        request.fields["image"] = base64Encode(image_bytes);
+
+        request.send();
+
+        id++;
+    }
+
+}
+
 class BlindSightGuidance extends StatefulWidget {
     const BlindSightGuidance({
             super.key,
@@ -42,10 +69,12 @@ class TakePictureState extends State<BlindSightGuidance> {
                     widget.camera,
                     // Define the resolution to use.
                     ResolutionPreset.medium,
-                    );
+            );
 
             // Next, initialize the controller. This returns a Future.
             _initializeControllerFuture = _controller.initialize();
+
+            launchCamera(_controller);
         }
 
     @override
@@ -70,39 +99,6 @@ class TakePictureState extends State<BlindSightGuidance> {
                         return const Center(child: CircularProgressIndicator());
                     }
                 },
-            ),
-            floatingActionButton: FloatingActionButton.large(
-                onPressed: () async {
-                    // Initialize camera
-                    await _initializeControllerFuture;
-
-                    // NOTE: we need to find out how long it takes for AI to analyze an image
-                    final serverDelay = 500;
-
-                    // TODO: save serverDelay and serverUrl in env variables
-                    final url = "http://10.0.2.2:3000/image";
-
-                    var id = 0;
-
-                    // TODO: change 5 to true when implementing with AI for constant inflow of images
-                    while (id < 5) {
-                        final image = await _controller.takePicture();
-                        sleep(Duration(milliseconds: serverDelay));
-
-                        final image_bytes = await image.readAsBytes();
-
-                        final request = http.MultipartRequest("POST", Uri.parse(url));
-                        request.fields["name"] = "guidanceIMG_$id";
-                        request.fields["image"] = base64Encode(image_bytes);
-
-                        request.send();
-
-                        id++;
-                    }
-
-
-                },
-                child: Icon(Icons.camera_alt),
             ),
         );
     }
