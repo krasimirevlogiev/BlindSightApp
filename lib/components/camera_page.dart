@@ -35,7 +35,14 @@ class TakePictureState extends State<BlindSightGuidance> {
             // Next, initialize the controller. This returns a Future.
             _initializeControllerFuture = _controller.initialize();
 
-            launchCamera(_controller);
+            (() async {
+                await _initializeControllerFuture;
+
+                launchCamera(_controller);
+
+                return _initializeControllerFuture;
+            })();
+
         }
 
     @override

@@ -17,6 +17,7 @@ Future<CameraDescription> initCamera() async {
 }
 
 void launchCamera(CameraController _controller) async {
+
     // NOTE: we need to find out how long it takes for AI to analyze an image
     final serverDelay = 500;
 
