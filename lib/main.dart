@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:BlindSightApp/order_traking_page.dart';
+import 'package:BlindSightApp/components/order_traking_page.dart';
 
 Future<void> main() async {
   runApp(const MyApp());
