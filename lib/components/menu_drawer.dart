@@ -1,3 +1,4 @@
+import 'package:BlindSightApp/components/register.dart';
 import 'package:flutter/material.dart';
 import 'package:BlindSightApp/components/camera_page.dart';
 import 'package:BlindSightApp/components/order_traking_page.dart';
@@ -40,6 +41,15 @@ class MenuDrawer extends StatelessWidget {
                 );
               },
             ),
+            ListTile(
+                title: Text("Register"),
+                onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Register())
+                    );
+                },
+            )
           ],
         ),
       );
