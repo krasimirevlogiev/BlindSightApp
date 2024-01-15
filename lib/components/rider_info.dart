@@ -28,7 +28,7 @@ class RiderInfo extends StatelessWidget {
           subtitle: const Text("860m - 28min"),
           trailing: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              primary: primaryColor,
+              backgroundColor: primaryColor,
               shape: const CircleBorder(),
               minimumSize: const Size(48, 48),
             ),

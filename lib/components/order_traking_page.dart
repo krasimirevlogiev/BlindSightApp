@@ -5,7 +5,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
-import 'package:BlindSightApp/camera_page.dart';
+import 'package:BlindSightApp/components/camera_page.dart';
+import 'package:BlindSightApp/components/menu_drawer.dart';
+import 'package:BlindSightApp/utils/camera.dart';
 import 'package:BlindSightApp/constants.dart';
 import 'package:location/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -145,7 +147,6 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
   bool _suggestionSelected = false;
 
   void setSelectedPlace(String place) {
-    // ...
     _suggestionSelected = true;
   }
 
@@ -238,41 +239,7 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
           )
         ],
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.black,
-              ),
-              child: Text(
-                'Menu',
-                style: TextStyle(color: Colors.white, fontSize: 24),
-              ),
-            ),
-            ListTile(
-              title: Text('BlindSight Guidance'),
-              onTap: () async {
-                final camera = await initCamera();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => BlindSightGuidance(camera: camera)),
-                );
-              },
-            ),
-            ListTile(
-              title: Text('Item 2'),
-              onTap: () {
-                // Update the state of the app
-                // Then close the drawer
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-      ),
+      drawer: MenuDrawer(),
       body: currentLocation == null
           ? const Center(child: Text("Loading"))
           : Stack(
