@@ -132,7 +132,7 @@ class RegisterFormState extends State<RegisterForm> {
                         onPressed: () {
                             if (_formKey.currentState!.validate()) {
                                 // TODO: Add serverUrl to environment variables
-                                final serverUrl = 'http://localhost:3000/verify';
+                                final serverUrl = 'http://10.0.2.2:3000/register';
 
                                 final request = http.MultipartRequest("POST", Uri.parse(serverUrl));
                                 request.fields["fname"] = user.fname!;
