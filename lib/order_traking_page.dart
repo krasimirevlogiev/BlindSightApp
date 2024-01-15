@@ -10,6 +10,7 @@ import 'package:BlindSightApp/constants.dart';
 import 'package:location/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_compass/flutter_compass.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 List<LatLng> polylineCoordinates = [];
 LocationData? currentLocation;
@@ -148,9 +149,13 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
     _suggestionSelected = true;
   }
 
-  void _onMapCreated(GoogleMapController controller) {
+  void _onMapCreated(GoogleMapController controller) async {
     googleMapController = controller;
     _controller.complete(controller);
+
+    String mapStyle = await rootBundle.loadString('assets/map_dark_theme.json');
+
+    googleMapController!.setMapStyle(mapStyle);
   }
 
   void getCurrentLocation() async {
@@ -209,19 +214,21 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
       key: _scaffoldKey,
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.menu, color: Colors.black),
+          icon: Icon(Icons.menu, color: Colors.white),
           onPressed: () {
             _scaffoldKey.currentState?.openDrawer();
           },
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.black,
         title: const Text(
           "Tracker",
-          style: TextStyle(color: Colors.black, fontSize: 16),
+          style: TextStyle(
+              color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
         ),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.search),
+            color: Colors.white,
             onPressed: () {
               showSearch(
                 context: context,
@@ -307,7 +314,7 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
                   bottom: 30,
                   right: 30,
                   child: FloatingActionButton(
-                    backgroundColor: Colors.black,
+                    backgroundColor: Colors.transparent,
                     onPressed: () async {
                       if (currentLocation != null &&
                           googleMapController != null) {
@@ -323,7 +330,15 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
                         );
                       }
                     },
-                    child: const Icon(Icons.navigation, color: Colors.white),
+                    child: ClipOval(
+                      child: Container(
+                        color: Colors
+                            .white, // This will fill the transparent background inside the SVG with white
+                        child: SvgPicture.asset(
+                          'assets/icons/navigation-15.svg',
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ],
