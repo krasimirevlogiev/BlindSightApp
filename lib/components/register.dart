@@ -1,3 +1,4 @@
+import 'package:BlindSightApp/components/verify.dart';
 import 'package:BlindSightApp/utils/types.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -129,7 +130,7 @@ class RegisterFormState extends State<RegisterForm> {
                         },
                     ),
                     ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
                             if (_formKey.currentState!.validate()) {
                                 // TODO: Add serverUrl to environment variables
                                 final serverUrl = 'http://10.0.2.2:3000/register';
@@ -141,7 +142,12 @@ class RegisterFormState extends State<RegisterForm> {
                                 request.fields["username"] = user.username!;
                                 request.fields["password"] = user.password!;
 
-                                request.send();
+                                await request.send();
+
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => Verify())
+                                );
                             }
                         }, 
                         child: Text('Register')
