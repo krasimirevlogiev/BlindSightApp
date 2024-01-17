@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:BlindSightApp/components/menu_drawer.dart';
 import 'package:BlindSightApp/components/verify.dart';
 import 'package:BlindSightApp/utils/types.dart';
 import 'package:BlindSightApp/utils/registration_utils.dart';
@@ -12,6 +13,8 @@ class Register extends StatelessWidget {
     Widget build(BuildContext context) {
         return Scaffold(
             backgroundColor: Colors.white,
+            appBar: AppBar(title: Text("BlindSight Registration")),
+            drawer: MenuDrawer(),
             body: Center(
                 child: ListView(
                     children: [

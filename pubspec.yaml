@@ -43,6 +43,7 @@ dependencies:
   path_provider: ^2.1.2
   path: ^1.8.3
   flutter_compass: ^0.8.0
+  shared_preferences: ^2.2.2
 
 
 dev_dependencies:
