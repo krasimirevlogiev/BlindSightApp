@@ -1,6 +1,8 @@
 import 'package:BlindSightApp/components/order_traking_page.dart';
+import 'package:BlindSightApp/utils/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Verify extends StatelessWidget {
 
@@ -54,7 +56,7 @@ class VerifyFormState extends State<VerifyForm> {
                             labelText: "Verification Code"
                         ),
                         validator: (value) {
-                            if (value == Null || num.tryParse(value!) == Null) {
+                            if (value == null || num.tryParse(value!) == null) {
                                 return "Please enter your verification code!";
                             }
 
@@ -71,12 +73,9 @@ class VerifyFormState extends State<VerifyForm> {
                                 final request = http.MultipartRequest("POST", Uri.parse(serverUrl));
                                 request.fields["verification_code"] = verification_code.toString();
 
-                                await request.send();
-
-                                Navigator.push(
-                                    context, 
-                                    MaterialPageRoute(builder: (context) => OrderTrackingPage())
-                                );
+                                final response = await request.send();
+                                
+                                await authenticate(context, response);
                             }
                         }, 
                         child: Text('Register')
