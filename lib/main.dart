@@ -1,4 +1,4 @@
-import 'package:BlindSightApp/components/register.dart';
+import 'package:BlindSightApp/components/login.dart';
 import 'package:flutter/material.dart';
 
 Future<void> main() async {
@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       // TODO: Once in production, the homepage should be BlindSightGuidance
-      home: Register(),
+      home: Login(),
     );
   }
 }
