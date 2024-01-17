@@ -72,7 +72,7 @@ class VerifyFormState extends State<VerifyForm> {
                                 request.fields["verification_code"] = verification_code.toString();
 
                                 final response = await request.send();
-                                
+
                                 await authenticate(context, response);
                             }
                         }, 

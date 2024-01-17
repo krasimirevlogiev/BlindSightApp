@@ -65,10 +65,7 @@ Future<void> authenticate(BuildContext context, StreamedResponse response) async
     } else if (response.statusCode == 202) {
         err = SnackBar(content: Text("Verification code must be a number!"));
 
-    } else if (response.statusCode == 203 || response.statusCode == 204) {
-        err = SnackBar(content: Text("Wrong code! Please try again!"));
-
-    } else if (response.statusCode == 205) {
+    } else if (response.statusCode == 203) {
         err = SnackBar(content: Text("Wrong credentials!"));
 
     } else {
