@@ -1,8 +1,6 @@
-import 'package:BlindSightApp/components/order_traking_page.dart';
-import 'package:BlindSightApp/utils/auth.dart';
+import 'package:BlindSightApp/utils/auth_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Verify extends StatelessWidget {
 
@@ -56,7 +54,7 @@ class VerifyFormState extends State<VerifyForm> {
                             labelText: "Verification Code"
                         ),
                         validator: (value) {
-                            if (value == null || num.tryParse(value!) == null) {
+                            if (value == null || num.tryParse(value) == null) {
                                 return "Please enter your verification code!";
                             }
 

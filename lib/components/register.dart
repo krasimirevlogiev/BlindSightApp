@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:BlindSightApp/components/menu_drawer.dart';
 import 'package:BlindSightApp/components/verify.dart';
 import 'package:BlindSightApp/utils/types.dart';
-import 'package:BlindSightApp/utils/registration_utils.dart';
+import 'package:BlindSightApp/utils/auth_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -150,6 +150,10 @@ class RegisterFormState extends State<RegisterForm> {
                                         user.password = value;
                                         return null;
                                     },
+                                    obscureText: true,
+                                    enableSuggestions: false,
+                                    autocorrect: false,
+                                    
                                 ),
                                 TextFormField(
                                     decoration: const InputDecoration(
@@ -162,6 +166,9 @@ class RegisterFormState extends State<RegisterForm> {
 
                                         return null;
                                     },
+                                    obscureText: true,
+                                    enableSuggestions: false,
+                                    autocorrect: false,
                                 ),
                                 ElevatedButton(
                                     onPressed: () async {
