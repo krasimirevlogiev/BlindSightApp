@@ -222,7 +222,7 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
         ),
         backgroundColor: Colors.white,
         title: const Text(
-          "Tracker",
+          "Track",
           style: TextStyle(
               color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
         ),

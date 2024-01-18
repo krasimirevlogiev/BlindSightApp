@@ -44,6 +44,7 @@ dependencies:
   path: ^1.8.3
   flutter_compass: ^0.8.0
   flutter_google_places: ^0.3.0 
+  flutter_lints: ^1.0.0
 
 dependency_overrides:
   http: ^1.0.0
