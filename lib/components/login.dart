@@ -6,6 +6,7 @@ import 'package:BlindSightApp/components/register.dart';
 import 'package:BlindSightApp/utils/auth_utils.dart';
 import 'package:BlindSightApp/utils/types.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_config/flutter_config.dart';
 import 'package:http/http.dart' as http;
 
 
@@ -142,10 +143,9 @@ class LoginFormState extends State<LoginForm> {
                             ElevatedButton(
                                 onPressed: () async {
                                     if (_formKey.currentState!.validate()) {
-                                        // TODO: Add serverUrl to environment variables
-                                        final serverUrl = 'http://10.0.2.2:3000/login';
+                                        final url = Uri.parse("https://" + FlutterConfig.get("BACKEND_HOST") + "/login");
 
-                                        final request = http.MultipartRequest("POST", Uri.parse(serverUrl));
+                                        final request = http.MultipartRequest("POST", url);
                                         request.fields["username"] = user.username!;
                                         request.fields["password"] = user.password!;
 

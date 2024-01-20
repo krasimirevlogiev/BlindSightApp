@@ -5,6 +5,7 @@ import 'package:BlindSightApp/components/verify.dart';
 import 'package:BlindSightApp/utils/types.dart';
 import 'package:BlindSightApp/utils/auth_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_config/flutter_config.dart';
 import 'package:http/http.dart' as http;
 
 class Register extends StatelessWidget {
@@ -173,10 +174,9 @@ class RegisterFormState extends State<RegisterForm> {
                                 ElevatedButton(
                                     onPressed: () async {
                                         if (_formKey.currentState!.validate()) {
-                                            // TODO: Add serverUrl to environment variables
-                                            final serverUrl = 'http://10.0.2.2:3000/register';
+                                            final url = Uri.parse("https://" + FlutterConfig.get("BACKEND_HOST") + "/register");
 
-                                            final request = http.MultipartRequest("POST", Uri.parse(serverUrl));
+                                            final request = http.MultipartRequest("POST", url);
                                             request.fields["fname"] = user.fname!;
                                             request.fields["lname"] = user.lname!;
                                             request.fields["email"] = user.email!;
