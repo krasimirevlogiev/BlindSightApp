@@ -19,6 +19,9 @@ PODS:
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
+  - shared_preferences_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
 
 DEPENDENCIES:
   - camera_avfoundation (from `.symlinks/plugins/camera_avfoundation/ios`)
@@ -28,6 +31,7 @@ DEPENDENCIES:
   - location (from `.symlinks/plugins/location/ios`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
+  - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
 
 SPEC REPOS:
   trunk:
@@ -48,6 +52,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/package_info_plus/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
+  shared_preferences_foundation:
+    :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
 
 SPEC CHECKSUMS:
   camera_avfoundation: 8b8d780bcfb6a4a02b0fbe2b4bd17b5b71946e68
@@ -58,6 +64,7 @@ SPEC CHECKSUMS:
   location: d5cf8598915965547c3f36761ae9cc4f4e87d22e
   package_info_plus: 115f4ad11e0698c8c1c5d8a689390df880f47e85
   path_provider_foundation: 3784922295ac71e43754bd15e0653ccfd36a147c
+  shared_preferences_foundation: b4c3b4cddf1c21f02770737f147a3f5da9d39695
 
 PODFILE CHECKSUM: 71c0f71030f460a7d9c257803bdaaba3444e330a
 

@@ -1,4 +1,5 @@
 import 'package:BlindSightApp/components/login.dart';
+import 'package:BlindSightApp/components/order_traking_page.dart';
 import 'package:flutter/material.dart';
 
 Future<void> main() async {
@@ -22,7 +23,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       // TODO: Once in production, the homepage should be BlindSightGuidance
-      home: Login(),
+      home: OrderTrackingPage(),
     );
   }
 }
