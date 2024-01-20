@@ -45,6 +45,7 @@ dependencies:
   flutter_compass: ^0.8.0
   flutter_google_places: ^0.3.0 
   shared_preferences: ^2.2.2
+  flutter_config: ^2.0.2
 
 dependency_overrides:
   http: ^1.0.0

@@ -1,8 +1,12 @@
 import 'package:BlindSightApp/components/login.dart';
 import 'package:BlindSightApp/components/order_traking_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_config/flutter_config.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await FlutterConfig.loadEnvVariables();
+
   runApp(const MyApp());
 }
 
