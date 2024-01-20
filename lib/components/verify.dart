@@ -1,5 +1,6 @@
 import 'package:BlindSightApp/utils/auth_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_config/flutter_config.dart';
 import 'package:http/http.dart' as http;
 
 class Verify extends StatelessWidget {
@@ -65,10 +66,9 @@ class VerifyFormState extends State<VerifyForm> {
                     ElevatedButton(
                         onPressed: () async {
                             if (_formKey.currentState!.validate()) {
-                                // TODO: Add serverUrl to environment variables
-                                final serverUrl = 'http://10.0.2.2:3000/verify';
+                                final url = Uri.parse("https://" + FlutterConfig.get("BACKEND_HOST") + "/verify");
 
-                                final request = http.MultipartRequest("POST", Uri.parse(serverUrl));
+                                final request = http.MultipartRequest("POST", url);
                                 request.fields["verification_code"] = verification_code.toString();
 
                                 final response = await request.send();

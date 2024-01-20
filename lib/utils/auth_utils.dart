@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:BlindSightApp/components/order_traking_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:flutter_config/flutter_config.dart';
 
 Future<String?> isLoggedIn() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -20,8 +21,7 @@ Future<void> logout() async {
 }
 
 Future<String> getUsers() async {
-    // TODO: put server IP in environment variable
-    var response = await http.get(Uri.parse("http://10.0.2.2:3000/users"));
+    var response = await http.get(Uri.parse("https://" + FlutterConfig.get("BACKEND_HOST") + "/users"));
 
     return response.body;
 }
