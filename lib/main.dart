@@ -1,12 +1,13 @@
-import 'package:BlindSightApp/components/login.dart';
+import 'package:BlindSightApp/components/login_screen.dart';
 import 'package:BlindSightApp/components/order_traking_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_config/flutter_config.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FlutterConfig.loadEnvVariables();
-
+  print('My environment variable: ${FlutterConfig.get('GOOGLE_MAPS_API_KEY')}');
   runApp(const MyApp());
 }
 

@@ -7,7 +7,7 @@ import 'package:BlindSightApp/utils/camera.dart';
 import 'package:BlindSightApp/utils/auth_utils.dart';
 import 'package:BlindSightApp/utils/types.dart';
 
-import 'login.dart';
+import 'package:BlindSightApp/components/login_screen.dart';
 
 class MenuDrawer extends StatelessWidget {
   @override
@@ -73,16 +73,21 @@ class MenuDrawer extends StatelessWidget {
                       userJSON = null;
                       await logout();
 
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => Login()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LoginPage(title: 'Login')));
                     },
                   )
                 else
                   ListTile(
                       title: Text("Login"),
                       onTap: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => Login()));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    LoginPage(title: 'Login')));
                       })
               ],
             ),
