@@ -7,7 +7,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FlutterConfig.loadEnvVariables();
-  print('My environment variable: ${FlutterConfig.get('GOOGLE_MAPS_API_KEY')}');
   runApp(const MyApp());
 }
 
