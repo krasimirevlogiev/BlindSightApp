@@ -6,7 +6,7 @@ import 'package:camera/camera.dart';
 import 'package:BlindSightApp/utils/bluetooth.dart';
 
 import 'package:BlindSightApp/utils/camera.dart';
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 class BlindSightGuidance extends StatefulWidget {
     const BlindSightGuidance({
