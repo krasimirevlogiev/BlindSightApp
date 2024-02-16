@@ -38,9 +38,12 @@ class TakePictureState extends State<BlindSightGuidance> {
             (() async {
                 await _initializeControllerFuture;
 
-                launchCamera(_controller);
+                while (true) {
+                    var instruction = await launchCamera(_controller);
 
-                return _initializeControllerFuture;
+                    ScaffoldMessenger.of(context).showSnackBar(instruction);
+                }
+
             })();
 
         }

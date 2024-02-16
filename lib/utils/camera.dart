@@ -17,30 +17,33 @@ Future<CameraDescription> initCamera() async {
   return cameras.first;
 }
 
-void launchCamera(CameraController _controller) async {
+Future<SnackBar> launchCamera(CameraController _controller) async {
 
     // NOTE: we need to find out how long it takes for AI to analyze an image
-    final serverDelay = 500;
+    final serverDelay = 1500;
 
-    final url = Uri.parse("https://" + FlutterConfig.get("BACKEND_HOST") + "/image");
+    final uri = Uri.parse("http://" + FlutterConfig.get("BACKEND_HOST") + "/image");
 
-    var id = 0;
+    final id = DateTime.now().millisecondsSinceEpoch;
 
-    // TODO: change 5 to true when implementing with AI for constant inflow of images
-    while (id < 5) {
-        final image = await _controller.takePicture();
-        sleep(Duration(milliseconds: serverDelay));
+    final image = await _controller.takePicture();
+    sleep(Duration(milliseconds: serverDelay));
 
-        final image_bytes = await image.readAsBytes();
+    final image_bytes = await image.readAsBytes();
 
-        final request = http.MultipartRequest("POST", url);
-        request.fields["name"] = "guidanceIMG_$id";
-        request.fields["image"] = base64Encode(image_bytes);
+    final request = http.MultipartRequest("POST", uri);
+    request.fields["name"] = "guidanceIMG_$id";
+    request.fields["image"] = base64Encode(image_bytes);
 
-        request.send();
+    final response = await request.send();
 
-        id++;
-    }
+    // TODO: Implement TTS functionality and remove the temporary snackbar below 👇
+
+    final responseText = await response.stream.bytesToString();
+    print(responseText);
+    var instruction = SnackBar(content: Text(responseText));
+
+    return instruction;
 
 }
 
