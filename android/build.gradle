@@ -18,6 +18,12 @@ allprojects {
     }
 }
 
+Android {
+  defaultConfig{
+  minSdkVersion: 19
+  }
+}
+
 rootProject.buildDir = '../build'
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"

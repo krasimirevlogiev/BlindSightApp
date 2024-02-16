@@ -41,7 +41,7 @@ Future<SnackBar> launchCamera(CameraController _controller) async {
 
     final responseText = await response.stream.bytesToString();
     print(responseText);
-    var instruction = SnackBar(content: Text(responseText));
+    var instruction = responseText;
 
     return instruction;
 
