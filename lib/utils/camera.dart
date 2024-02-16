@@ -17,7 +17,7 @@ Future<CameraDescription> initCamera() async {
   return cameras.first;
 }
 
-Future<SnackBar> launchCamera(CameraController _controller) async {
+Future<String> launchCamera(CameraController _controller) async {
 
     // NOTE: we need to find out how long it takes for AI to analyze an image
     final serverDelay = 1500;

@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:BlindSightApp/components/menu_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:BlindSightApp/utils/bluetooth.dart';
 
 import 'package:BlindSightApp/utils/camera.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 
 class BlindSightGuidance extends StatefulWidget {
     const BlindSightGuidance({
@@ -36,12 +40,20 @@ class TakePictureState extends State<BlindSightGuidance> {
             _initializeControllerFuture = _controller.initialize();
 
             (() async {
+                //print("starting bluetooth 🧙");
+                //BluetoothCharacteristic connection = await initBluetooth();
                 await _initializeControllerFuture;
 
                 while (true) {
                     var instruction = await launchCamera(_controller);
 
-                    ScaffoldMessenger.of(context).showSnackBar(instruction);
+
+                    //sleep(Duration(seconds: 1));
+                    //connection.write([1]);
+                    
+                    var instruction_snackbar = SnackBar(content: Text(instruction));
+                    ScaffoldMessenger.of(context).showSnackBar(instruction_snackbar);
+
                 }
 
             })();
