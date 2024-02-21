@@ -1,12 +1,10 @@
-import 'dart:io';
-
 import 'package:BlindSightApp/components/menu_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
-import 'package:BlindSightApp/utils/bluetooth.dart';
-
+//import 'package:BlindSightApp/utils/bluetooth.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:BlindSightApp/utils/camera.dart';
-import 'package:flutter_blue/flutter_blue.dart';
+//import 'package:flutter_blue/flutter_blue.dart';
 
 class BlindSightGuidance extends StatefulWidget {
     const BlindSightGuidance({
@@ -39,7 +37,9 @@ class TakePictureState extends State<BlindSightGuidance> {
             // Next, initialize the controller. This returns a Future.
             _initializeControllerFuture = _controller.initialize();
 
-            (() async {
+            final audioplayer = AudioPlayer();
+
+            Future.delayed(Duration.zero, () async {
                 //print("starting bluetooth 🧙");
                 //BluetoothCharacteristic connection = await initBluetooth();
                 await _initializeControllerFuture;
@@ -47,16 +47,19 @@ class TakePictureState extends State<BlindSightGuidance> {
                 while (true) {
                     var instruction = await launchCamera(_controller);
 
+                    instruction = instruction.trim();
 
-                    //sleep(Duration(seconds: 1));
-                    //connection.write([1]);
-                    
-                    var instruction_snackbar = SnackBar(content: Text(instruction));
-                    ScaffoldMessenger.of(context).showSnackBar(instruction_snackbar);
+                    if (instruction == "LEFT" ||
+                        instruction == "RIGHT" ||
+                        instruction == "STOP" ) {
 
+                        await audioplayer.play(AssetSource("sounds/" + instruction.toLowerCase() + ".mp3"));
+                        var instruction_snackbar = SnackBar(content: Text(instruction));
+                        ScaffoldMessenger.of(context).showSnackBar(instruction_snackbar);
+                    }
                 }
 
-            })();
+                });
 
         }
 

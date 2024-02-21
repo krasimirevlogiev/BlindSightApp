@@ -41,6 +41,7 @@ dependencies:
   email_validator: ^2.0.1
   flutter_dotenv: ^5.0.0
   flutter_blue: ^0.8.0
+  audioplayers: ^5.2.1
 
   camera: ^0.10.5+9
   path_provider: ^2.1.2
@@ -84,6 +85,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/
+    - assets/sounds/
     - assets/icons/
     
 
