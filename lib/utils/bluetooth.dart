@@ -7,7 +7,7 @@ class BleController extends GetxController {
   // This method now returns a Future<BluetoothDevice?>
   Future<BluetoothDevice?> scanAndConnectToDevice() async {
   // Replace 'your_uuid_here' with the actual UUID you're looking for
-  final Guid targetUuid = Guid("beb5483e-36e1-4688-b7f5-ea07361b26a8");
+  final Guid targetUuid = Guid("4fafc201-1fb5-459e-8fcc-c5c9c331914b");
     BluetoothDevice? connectedDevice;
     var blePermission = await Permission.bluetoothScan.status;
     if (blePermission.isDenied) {
