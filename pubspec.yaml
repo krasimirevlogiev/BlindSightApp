@@ -42,7 +42,8 @@ dependencies:
   flutter_dotenv: ^5.0.0
   flutter_blue: ^0.8.0
   audioplayers: ^5.2.1
-
+  flutter_blue_plus: ^1.31.15
+  speech_to_text: ^6.6.0
   camera: ^0.10.5+9
   path_provider: ^2.1.2
   path: ^1.8.3

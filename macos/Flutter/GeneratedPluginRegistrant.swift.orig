@@ -4,9 +4,13 @@
 
 import FlutterMacOS
 import Foundation
+
+<<<<<<< HEAD
 import audioplayers_darwin
 import flutter_blue
+=======
 import flutter_blue_plus
+>>>>>>> fa9528dbe69bb701a7cbbe97b661827f7d085d34
 import location
 import package_info_plus
 import path_provider_foundation
@@ -14,9 +18,12 @@ import shared_preferences_foundation
 import speech_to_text_macos
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
+<<<<<<< HEAD
   AudioplayersDarwinPlugin.register(with: registry.registrar(forPlugin: "AudioplayersDarwinPlugin"))
   FlutterBluePlugin.register(with: registry.registrar(forPlugin: "FlutterBluePlugin"))
+=======
   FlutterBluePlusPlugin.register(with: registry.registrar(forPlugin: "FlutterBluePlusPlugin"))
+>>>>>>> fa9528dbe69bb701a7cbbe97b661827f7d085d34
   LocationPlugin.register(with: registry.registrar(forPlugin: "LocationPlugin"))
   FPPPackageInfoPlusPlugin.register(with: registry.registrar(forPlugin: "FPPPackageInfoPlusPlugin"))
   PathProviderPlugin.register(with: registry.registrar(forPlugin: "PathProviderPlugin"))

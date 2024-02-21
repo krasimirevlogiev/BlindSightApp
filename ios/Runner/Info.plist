@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-<dict>
-	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>Need BLE permission</string>
-	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>Need BLE permission</string>	
-    <key>NSCameraUsageDescription</key>
-    <string>Camera needed for AI to provide guidance.</string>
-    <key>NSMicrophoneUsageDescription</key>
-    <string>Microphone needed for user's voice commands.</string>
+  <dict>
+<key>NSSpeechRecognitionUsageDescription</key>
+<string>Your description here. Explain why your app uses speech recognition.</string>
+<key>NSMicrophoneUsageDescription</key>
+<string>Permission to use Microphone is required to allow guidance.</string>
+  <key>NSBluetoothAlwaysUsageDescription</key>
+  <string>Need BLE permission</string>
+  <key>NSBluetoothPeripheralUsageDescription</key>
+  <string>Need BLE permission</string>
+<key>NSCameraUsageDescription</key>
+  <string>Camera needed for AI to provide guidance.</string>
+  <key>NSMicrophoneUsageDescription</key>
+  <string>Microphone needed for user's voice commands.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>

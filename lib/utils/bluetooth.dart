@@ -1,37 +1,54 @@
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'dart:async';
+import 'dart:io';
 
+Future<void> main() async {
+  // first, check if bluetooth is supported by your hardware
+  if (await FlutterBluePlus.isSupported == false) {
+    print("Bluetooth not supported by this device");
+    return;
+  }
 
-Future<BluetoothCharacteristic> initBluetooth() async {
-    print("HELLO🚀🚀🚀");
-    FlutterBlue flutterBlue = FlutterBlue.instance;
-    flutterBlue.startScan(timeout: Duration(seconds: 4));
+  // handle bluetooth on & off
+  var adapterStateSubscription = FlutterBluePlus.adapterState.listen((BluetoothAdapterState state) {
+    print(state);
+    if (state == BluetoothAdapterState.on) {
+      // usually start scanning, connecting, etc
+    } else {
+      // show an error to the user, etc
+    }
+  });
 
-    BluetoothDevice? device = null;
+  // listen to scan results
+  var scanResultsSubscription = FlutterBluePlus.onScanResults.listen((results) {
+    if (results.isNotEmpty) {
+      ScanResult r = results.last; // the most recently found device
+      print('${r.device.remoteId}: "${r.advertisementData.advName}" found!');
+    }
+  },
+    onError: (e) => print(e),
+  );
 
-    flutterBlue.scanResults.listen((event) {
-        for (ScanResult r in event) {
-            print("New device: ${r.device.name}");
-            if (r.device.name == "BlindSight_LEFT") {
-                device = r.device;
-            }
-        }
-    });
+  // Wait for Bluetooth enabled & permission granted
+  await FlutterBluePlus.adapterState.where((val) => val == BluetoothAdapterState.on).first;
 
-    await device!.connect();
+  // Start scanning w/ timeout
+  await FlutterBluePlus.startScan(
+    withServices:[Guid("180D")],
+    withNames:["Bluno"],
+    timeout: Duration(seconds:15));
 
-    List<BluetoothService> services = await device!.discoverServices();
+  // wait for scanning to stop
+  await FlutterBluePlus.isScanning.where((val) => val == false).first;
 
-    late BluetoothCharacteristic characteristic;
+  // Connect to the device
+  // Replace `device` with the actual BluetoothDevice instance you want to connect to
+  // await device.connect();
 
-    services.forEach((service) {
-            for (BluetoothCharacteristic c in service.characteristics) {
-                print("New characteristic: ${c.serviceUuid}");
-                if (c.serviceUuid == "4fafc201-1fb5-459e-8fcc-c5c9c331914b") {
-                    characteristic = c;
-                    break;
-                }
-            }
-    });
+  // Disconnect from device
+  // await device.disconnect();
 
-    return characteristic;
+  // cancel subscriptions when done
+  adapterStateSubscription.cancel();
+  scanResultsSubscription.cancel();
 }

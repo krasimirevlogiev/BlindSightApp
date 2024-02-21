@@ -1,8 +1,14 @@
 import 'package:BlindSightApp/components/menu_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+//import 'package:BlindSightApp/utils/bluetooth.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:BlindSightApp/utils/camera.dart';
+<<<<<<< HEAD
+//import 'package:flutter_blue/flutter_blue.dart';
+=======
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+>>>>>>> fa9528dbe69bb701a7cbbe97b661827f7d085d34
 
 class BlindSightGuidance extends StatefulWidget {
     const BlindSightGuidance({
