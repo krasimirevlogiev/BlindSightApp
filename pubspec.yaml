@@ -50,6 +50,10 @@ dependencies:
   flutter_google_places: ^0.3.0 
   shared_preferences: ^2.2.2
   flutter_config: ^2.0.2
+  permission_handler: ^11.3.0
+  get: ^4.6.6
+
+
 
 dependency_overrides:
   http: ^1.0.0

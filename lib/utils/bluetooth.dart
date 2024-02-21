@@ -1,54 +1,58 @@
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'dart:async';
-import 'dart:io';
 
-Future<void> main() async {
-  // first, check if bluetooth is supported by your hardware
-  if (await FlutterBluePlus.isSupported == false) {
-    print("Bluetooth not supported by this device");
-    return;
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
+class BleController extends GetxController {
+
+  // This method now returns a Future<BluetoothDevice?>
+  Future<BluetoothDevice?> scanAndConnectToDevice() async {
+  // Replace 'your_uuid_here' with the actual UUID you're looking for
+  final Guid targetUuid = Guid("beb5483e-36e1-4688-b7f5-ea07361b26a8");
+    BluetoothDevice? connectedDevice;
+    var blePermission = await Permission.bluetoothScan.status;
+    if (blePermission.isDenied) {
+      blePermission = await Permission.bluetoothScan.request();
+    }
+    if (blePermission.isGranted) {
+      await Permission.bluetoothConnect.request();
+      // Start scanning with filters for the specific UUID
+      await FlutterBluePlus.startScan(
+        withServices: [targetUuid],
+        timeout: Duration(seconds: 10),
+      );
+
+      // Listen for scan results
+      await for (var scanResult in FlutterBluePlus.scanResults) {
+        for (ScanResult result in scanResult) {
+          var device = result.device;
+          print('Found device: ${device.advName} [${device.remoteId}]');
+
+          // Check if the device has the target UUID
+          if (result.advertisementData.serviceUuids.contains(targetUuid.toString())) {
+            print('Device with target UUID found, connecting...');
+            await FlutterBluePlus.stopScan();
+            connectedDevice = await connectToDevice(device);
+            return connectedDevice; // Return the connected device
+          }
+        }
+      }
+
+      // Make sure to stop the scan after the timeout
+      await Future.delayed(Duration(seconds: 10));
+      FlutterBluePlus.stopScan();
+    } else {
+      print('BLE scan permission is denied');
+    }
+    return connectedDevice; // Return null if no device was connected
   }
 
-  // handle bluetooth on & off
-  var adapterStateSubscription = FlutterBluePlus.adapterState.listen((BluetoothAdapterState state) {
-    print(state);
-    if (state == BluetoothAdapterState.on) {
-      // usually start scanning, connecting, etc
-    } else {
-      // show an error to the user, etc
+  // Modify connectToDevice to return the BluetoothDevice upon successful connection
+  Future<BluetoothDevice?> connectToDevice(BluetoothDevice device) async {
+    try {
+      await device.connect();
+      return device; // Return the device after successful connection
+    } catch (e) {
+      print("Failed to connect to the device: $e");
+      return null; // Return null if the connection fails
     }
-  });
-
-  // listen to scan results
-  var scanResultsSubscription = FlutterBluePlus.onScanResults.listen((results) {
-    if (results.isNotEmpty) {
-      ScanResult r = results.last; // the most recently found device
-      print('${r.device.remoteId}: "${r.advertisementData.advName}" found!');
-    }
-  },
-    onError: (e) => print(e),
-  );
-
-  // Wait for Bluetooth enabled & permission granted
-  await FlutterBluePlus.adapterState.where((val) => val == BluetoothAdapterState.on).first;
-
-  // Start scanning w/ timeout
-  await FlutterBluePlus.startScan(
-    withServices:[Guid("180D")],
-    withNames:["Bluno"],
-    timeout: Duration(seconds:15));
-
-  // wait for scanning to stop
-  await FlutterBluePlus.isScanning.where((val) => val == false).first;
-
-  // Connect to the device
-  // Replace `device` with the actual BluetoothDevice instance you want to connect to
-  // await device.connect();
-
-  // Disconnect from device
-  // await device.disconnect();
-
-  // cancel subscriptions when done
-  adapterStateSubscription.cancel();
-  scanResultsSubscription.cancel();
-}
+  }}

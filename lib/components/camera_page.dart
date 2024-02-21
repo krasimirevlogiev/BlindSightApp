@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:BlindSightApp/utils/camera.dart';
+import 'package:BlindSightApp/utils/bluetooth.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+
 
 class BlindSightGuidance extends StatefulWidget {
     const BlindSightGuidance({
@@ -31,14 +34,15 @@ class TakePictureState extends State<BlindSightGuidance> {
                     // Define the resolution to use.
                     ResolutionPreset.medium,
             );
-
+            
             // Next, initialize the controller. This returns a Future.
             _initializeControllerFuture = _controller.initialize();
-
             final audioplayer = AudioPlayer();
 
             Future.delayed(Duration.zero, () async {
-                //print("starting bluetooth 🧙");
+                
+      BluetoothDevice? device = await BleController().scanAndConnectToDevice();
+      //print("starting bluetooth 🧙");
                 //BluetoothCharacteristic connection = await initBluetooth();
                 await _initializeControllerFuture;
 
@@ -58,8 +62,9 @@ class TakePictureState extends State<BlindSightGuidance> {
                 }
 
                 });
-
+                
         }
+        
 
     @override
         void dispose() {
