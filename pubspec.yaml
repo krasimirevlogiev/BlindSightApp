@@ -40,7 +40,6 @@ dependencies:
   flutter_google_maps_webservices: ^1.1.1
   email_validator: ^2.0.1
   flutter_dotenv: ^5.0.0
-  flutter_blue: ^0.8.0
   audioplayers: ^5.2.1
   flutter_blue_plus: ^1.31.15
   speech_to_text: ^6.6.0

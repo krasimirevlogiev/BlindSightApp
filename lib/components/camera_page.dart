@@ -68,23 +68,31 @@ class TakePictureState extends State<BlindSightGuidance> {
             super.dispose();
         }
 
-    @override 
-    Widget build(BuildContext context) {
-        return Scaffold(
-            appBar: AppBar(title: const Text("BlindSight Guidance")),
-            drawer: MenuDrawer(),
-            body: FutureBuilder<void>(
-                future: _initializeControllerFuture,
-                builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                        // If the Future is complete, display the preview.
-                        return CameraPreview(_controller);
-                    } else {
-                        // Otherwise, display a loading indicator.
-                        return const Center(child: CircularProgressIndicator());
-                    }
-                },
-            ),
-        );
-    }
+    
+@override
+Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(title: const Text("BlindSight Guidance")),
+        drawer: MenuDrawer(), // Keeps the drawer accessible
+        body: FutureBuilder<void>(
+            future: _initializeControllerFuture,
+            builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                    // Use a Column to layout the CameraPreview to take all available space
+                    return Column(
+                      children: <Widget>[
+                        Expanded(
+                          // The Expanded widget makes the CameraPreview expand to fill the available space
+                          child: CameraPreview(_controller),
+                        ),
+                      ],
+                    );
+                } else {
+                    // Display a loading indicator while the camera is initializing
+                    return const Center(child: CircularProgressIndicator());
+                }
+            },
+        ),
+    );
+}
 }
