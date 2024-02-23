@@ -1,9 +1,12 @@
 import 'package:BlindSightApp/components/menu_drawer.dart';
+import 'package:BlindSightApp/utils/bluetooth.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:BlindSightApp/utils/camera.dart';
-import 'package:BlindSightApp/utils/bluetooth.dart';
+import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
+
+
 
 
 class BlindSightGuidance extends StatefulWidget {
@@ -27,6 +30,8 @@ class TakePictureState extends State<BlindSightGuidance> {
             super.initState();
             // To display the current output from the Camera,
             // create a CameraController.
+            BleDeviceManager bluetooth_connectivity = BleDeviceManager();
+            bluetooth_connectivity.connectToDevice("beb5483e-36e1-4688-b7f5-ea07361b26a8");
             _controller = CameraController(
                     // Get a specific camera from the list of available cameras.
                     widget.camera,
@@ -34,15 +39,16 @@ class TakePictureState extends State<BlindSightGuidance> {
                     ResolutionPreset.medium,
             );
             
+    
             // Next, initialize the controller. This returns a Future.
             _initializeControllerFuture = _controller.initialize();
             final audioplayer = AudioPlayer();
-
+            
             Future.delayed(Duration.zero, () async {
                //bluetooth here:
 
                 await _initializeControllerFuture;
-
+                
                 while (true) {
                     var instruction = await launchCamera(_controller);
 

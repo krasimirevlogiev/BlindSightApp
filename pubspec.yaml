@@ -39,7 +39,7 @@ dependencies:
   flutter_svg: ^2.0.9
   flutter_google_maps_webservices: ^1.1.1
   email_validator: ^2.0.1
-  flutter_dotenv: ^5.0.0
+  flutter_dotenv: ^5.1.0
   audioplayers: ^5.2.1
   speech_to_text: ^6.6.0
   camera: ^0.10.5+9
@@ -90,6 +90,7 @@ flutter:
     - assets/
     - assets/sounds/
     - assets/icons/
+    - .env
     
 
   # An image asset can refer to one or more resolution-specific "variants", see

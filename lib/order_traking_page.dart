@@ -1,5 +1,6 @@
 import 'dart:async';
 //import 'dart:html';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -94,9 +95,10 @@ class LocationSearchDelegate extends SearchDelegate<String> {
   }
 
   Future<List<String>> _getPlaceSuggestions(String query) async {
+    await dotenv.load(fileName: ".env");
     final response = await http.get(
       Uri.parse(
-        'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$query&key=AIzaSyBPg4rFcszsTpNmd0mSjSMKye20SrGlhD8',
+        'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$query&key=${dotenv.env['GOOGLE_MAPS_API_KEY']}',
       ),
     );
 
@@ -145,6 +147,7 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
   LatLng? sourceLocation;
   LatLng? destination;
   bool _suggestionSelected = false;
+  Map<CircleId, Circle> circles = {}; // Declare circles here
 
   void setSelectedPlace(String place) {
     _suggestionSelected = true;
@@ -177,20 +180,17 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
           );
         }
 
-        final ImageConfiguration imageConfiguration =
-            createLocalImageConfiguration(context);
-        final BitmapDescriptor bitmapDescriptor =
-            await BitmapDescriptor.fromAssetImage(
-                imageConfiguration, 'assets/currentLocation.png');
-
-        MarkerId markerId = const MarkerId("currentLocation");
-        Marker currentLocationMarker = Marker(
-          markerId: markerId,
-          position: LatLng(newLoc.latitude!, newLoc.longitude!),
-          icon: bitmapDescriptor,
+        CircleId circleId = CircleId("currentLocation");
+        Circle currentLocationCircle = Circle(
+          circleId: circleId,
+          center: LatLng(newLoc.latitude!, newLoc.longitude!),
+          radius: 10, // Adjust this value as needed
+          fillColor: Colors.blue.withOpacity(0.5),
+          strokeColor: Colors.blue,
+          strokeWidth: 1,
         );
         setState(() {
-          markers[markerId] = currentLocationMarker;
+          circles[circleId] = currentLocationCircle;
         });
       });
     });
