@@ -10,10 +10,10 @@
   <string>Need BLE permission</string>
   <key>NSBluetoothPeripheralUsageDescription</key>
   <string>Need BLE permission</string>
-<key>NSCameraUsageDescription</key>
-  <string>Camera needed for AI to provide guidance.</string>
   <key>NSMicrophoneUsageDescription</key>
   <string>Microphone needed for user's voice commands.</string>
+  <key>NSCameraUsageDescription</key>
+  <string>Camera needed for AI to provide guidance.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
