@@ -20,14 +20,13 @@ Future<CameraDescription> initCamera() async {
 Future<String> launchCamera(CameraController _controller) async {
 
     // NOTE: we need to find out how long it takes for AI to analyze an image
-    final serverDelay = 1500;
 
     final uri = Uri.parse("http://" + FlutterConfig.get("BACKEND_HOST") + "/image");
 
     final id = DateTime.now().millisecondsSinceEpoch;
 
     final image = await _controller.takePicture();
-    sleep(Duration(milliseconds: serverDelay));
+    sleep(Duration(milliseconds: int.parse(FlutterConfig.get("SERVER_DELAY"))));
 
     final image_bytes = await image.readAsBytes();
 
