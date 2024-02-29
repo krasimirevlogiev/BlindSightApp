@@ -7,10 +7,8 @@ import 'package:BlindSightApp/utils/camera.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 
 
-
-
-class BlindSightGuidance extends StatefulWidget {
-    const BlindSightGuidance({
+class BlindSense extends StatefulWidget {
+    const BlindSense({
             super.key,
             required this.camera,
             });
@@ -21,7 +19,7 @@ class BlindSightGuidance extends StatefulWidget {
         TakePictureState createState() => TakePictureState();
 }
 
-class TakePictureState extends State<BlindSightGuidance> {
+class TakePictureState extends State<BlindSense> {
     late CameraController _controller;
     late Future<void> _initializeControllerFuture;
 

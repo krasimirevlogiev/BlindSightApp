@@ -1,17 +1,21 @@
-import 'package:BlindSightApp/components/login_screen.dart';
-import 'package:BlindSightApp/components/order_traking_page.dart';
+import 'package:BlindSightApp/components/blindsense.dart';
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_config/flutter_config.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
+import 'package:BlindSightApp/utils/camera.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FlutterConfig.loadEnvVariables();
-  runApp(const MyApp());
+  final camera = await initCamera();
+  runApp(BlindSightApp(camera: camera));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class BlindSightApp extends StatelessWidget {
+  const BlindSightApp({super.key, required this.camera});
+
+  final CameraDescription camera;
+
 
   // This widget is the root of your application.
   @override
@@ -26,8 +30,8 @@ class MyApp extends StatelessWidget {
           elevation: 0,
         ),
       ),
-      // TODO: Once in production, the homepage should be BlindSightGuidance
-      home: OrderTrackingPage(),
+
+      home: BlindSense(camera: camera),
     );
   }
 }

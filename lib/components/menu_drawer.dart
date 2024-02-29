@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:BlindSightApp/components/camera_page.dart';
+import 'package:BlindSightApp/components/blindsense.dart';
 import 'package:BlindSightApp/components/order_traking_page.dart';
 import 'package:BlindSightApp/utils/camera.dart';
 import 'package:BlindSightApp/utils/auth_utils.dart';
@@ -43,14 +43,14 @@ class MenuDrawer extends StatelessWidget {
                       child: Image.asset("assets/blindsight_logo.png"),
                     )),
                 ListTile(
-                  title: Text('BlindSight Guidance'),
+                  title: Text('BlindSense'),
                   onTap: () async {
                     final camera = await initCamera();
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              BlindSightGuidance(camera: camera)),
+                              BlindSense(camera: camera)),
                     );
                   },
                 ),
