@@ -26,5 +26,5 @@ Keep your phone level and wait for one of the following instructions:
 **NOTE:** User will not receive a direction if the path in front of them is clear.
 
 ### Testing
-We have conducted testing with students and faculty on our campus. You can find the corresponding footage [here](https://github.com/pesho65/BlindSightApp)
+We have conducted testing with students and faculty on our campus. You can find the corresponding footage [here](https://1drv.ms/f/s!AverqHyA6ifYilUTQSp7U406YdyK?e=PSx6aY)
 
