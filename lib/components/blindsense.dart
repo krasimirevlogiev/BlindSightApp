@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:BlindSightApp/utils/camera.dart';
-import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 
 
 class BlindSense extends StatefulWidget {
@@ -28,8 +27,6 @@ class TakePictureState extends State<BlindSense> {
             super.initState();
             // To display the current output from the Camera,
             // create a CameraController.
-            BleDeviceManager bluetooth_connectivity = BleDeviceManager();
-            bluetooth_connectivity.connectToDevice("beb5483e-36e1-4688-b7f5-ea07361b26a8");
             _controller = CameraController(
                     // Get a specific camera from the list of available cameras.
                     widget.camera,
@@ -43,7 +40,6 @@ class TakePictureState extends State<BlindSense> {
             final audioplayer = AudioPlayer();
             
             Future.delayed(Duration.zero, () async {
-               //bluetooth here:
 
                 await _initializeControllerFuture;
                 
@@ -52,13 +48,20 @@ class TakePictureState extends State<BlindSense> {
 
                     instruction = instruction.trim();
 
+                    String devices = await sendInstruction();
+                    if (devices != "") {
+                        var devicessnack = SnackBar(content: Text(devices));
+                        ScaffoldMessenger.of(context).showSnackBar(devicessnack);
+                    }
+
                     if (instruction == "LEFT" ||
                         instruction == "RIGHT" ||
                         instruction == "STOP" ) {
 
+
                         await audioplayer.play(AssetSource("sounds/" + instruction.toLowerCase() + ".mp3"));
-                        var instruction_snackbar = SnackBar(content: Text(instruction));
-                        ScaffoldMessenger.of(context).showSnackBar(instruction_snackbar);
+                        //var instruction_snackbar = SnackBar(content: Text(instruction));
+                        //ScaffoldMessenger.of(context).showSnackBar(instruction_snackbar);
                     }
                 }
 
